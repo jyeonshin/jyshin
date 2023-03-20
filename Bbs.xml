@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="Bbs"><!--여기는 myBatis 영역  -->
+
+	<!-- 로그인 이후 -->
+	<select id="loginAf" resultType="mul.cam.food.dto.MemberDto" parameterType="mul.cam.food.dto.MemberDto">
+		select *
+		from user
+		where user_id = #{user_id} and password=#{password}	
+	</select>
+
+	<!--모든 글 리스트  -->
+	<select id="getlist" resultType="mul.cam.food.dto.BbsDto" >
+	select * from recipe
+	
+	</select>
+	
+	<!-- 게시글 상세보기 -->
+	<select id="detailBbs" resultType="mul.cam.food.dto.BbsDto">
+		select seq, writer, title, thumbnail, content, ingredients, cookingtime, serving , category, regdate, star, tag
+		from recipe
+		where seq=#{seq}		
+	</select>
+
+	<!-- 게시판 글쓰기  -->
+	<insert id="bbswrite" parameterType="mul.cam.food.dto.BbsDto">
+		insert into recipe(writer, title, thumbnail, content, ingredients, cookingtime, serving , category, regdate, star, tag)
+			values(#{writer}, #{title}, #{thumbnail}, #{content}, #{ingredients}, #{cookingtime}, #{serving}, #{category}, now(), 0, #{tag}) 
+	</insert>
+	
+	<!-- 게시판 수정 -->
+	<update id="updateBbs" parameterType="mul.cam.food.dto.BbsDto">
+		update recipe
+		set thumbnail=#{thumbnail}, title=#{title}, content=#{content}, ingredients=#{ingredients}, cookingtime=#{cookingtime}, serving=#{serving}, category=#{category}, regdate=now(), tag=#{tag}
+		where seq=#{seq}
+	</update>
+	
+	<!-- 게시판 삭제 -->
+	<update id="deleteBbs" parameterType="mul.cam.food.dto.BbsDto">
+		delete
+		from recipe 
+		where seq=#{seq}
+	</update>
+	
+	<!--  댓글 쓰기 -->
+	<insert id="commentWrite" parameterType="mul.cam.food.dto.BbsComment">
+		insert into reply(seq, content, writer)
+		values(#{seq}, #{content}, #{writer})
+	</insert>
+	
+	<!--  댓글 목록 -->
+	<select id="commentList" parameterType="Integer" resultType="mul.cam.food.dto.BbsComment">
+		select seq, content, writer
+		from reply
+		where seq=#{seq}
+	</select>
+	
+	<!-- 댓글 수정 -->
+	<update id="updateComment" parameterType="mul.cam.food.dto.BbsComment">
+		update reply
+		set content=#{content}, writer=#{writer}
+		where seq=#{seq}
+	</update>
+	
+	<!-- 댓글 삭제 -->
+	<delete id="deleteComment" parameterType="mul.cam.food.dto.BbsComment">
+		delete
+		from reply
+		where seq=#{seq}
+	</delete>
+	
+</mapper>
